@@ -260,6 +260,7 @@ section {
     border-radius: 5px;
 }
 
+
 /* CLASS PARA FORMATAR COM JS */
 .aprovado {
     background: #64dd17;
@@ -292,14 +293,23 @@ form {
 }
 
 /* INPUTS */
+
+input:invalid, textarea:invalid{
+    border-color: red;
+}
+
+input:valid, textarea:valid{
+    border-color: green;
+}
+
 input[type=number], input[type=text] {
-    padding: 5px;
+    padding: 4px;
     text-align: center;
 }
 
 .cx, input[type=text] {
-    border: 1px solid #ececec;
-    border-radius: 5px;
+    
+    border-radius: 100px;
 }
 
 /* BOTOES */
