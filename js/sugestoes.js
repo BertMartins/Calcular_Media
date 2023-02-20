@@ -25,5 +25,5 @@ document.getElementById("suggestion-form").addEventListener("submit", function(e
     aviso.textContent = ''
     aviso.classList.remove('sucesso')
     }, 2000);
-  formulario.reset() // limpar form
+ 
 });
