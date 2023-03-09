@@ -17,6 +17,9 @@ let cxNota3 = document.querySelector('#nota3')
 let cxMediaFinal = document.querySelector('#mediafinal') 
 let cxSituacao = document.querySelector('#situacao')
 let cxSituacaoRecuperacao = document.querySelector('#situacaoRecuperacao')
+let divOculta = document.getElementById("minha-div-oculta");
+
+
 
 // CALCULAR MEDIA
 function calcularMedia(n1, n2) {
@@ -26,20 +29,26 @@ function calcularMedia(n1, n2) {
 // DEFINIR SITUACAO FINAL COM BASE NA MEDIA
 function situacaoFinal(mediaFinal) {
     let situacaoFinal = ''
-    let Necessidade =  10 - mediaFinal
+    let Necessidade =  10 - mediaFinal// obtém a referência à div oculta
+
+
     
     if (mediaFinal >= 7) {
         situacaoFinal = 'Aprovado(a)'
         document.getElementById("necessidade").innerHTML = "" 
+        divOculta.style.display = "none";
     } else if (mediaFinal < 4) {
         situacaoFinal = 'Reprovado(a)'
         document.getElementById("necessidade").innerHTML = "" 
+        divOculta.style.display = "none";
     } else {
         situacaoFinal = 'Recuperação'
         document.getElementById("necessidade").innerHTML = "Você precisa de " + Necessidade + " para ser Aprovado na Avaliação Final" 
+        divOculta.style.display = "block";
     }
     return situacaoFinal
-    document.getElementById("necessidade").innerHTML = "" 
+    document.getElementById("necessidade").innerHTML = ""
+    divOculta.style.display = "none"; 
 }
 
 // FORMATAR A CAIXA DE SITUACAO FINAL
@@ -197,6 +206,7 @@ btnLimpar.addEventListener('click', function() {
     cxSituacaoRecuperacao.classList.remove('reprovadofinal')
     cxSituacaoRecuperacao.value = "";
     document.getElementById("necessidade").innerHTML = "" 
+    divOculta.style.display = "none";
     cxNota3.value = "";
     cxMediaFinal.value = "";
     
