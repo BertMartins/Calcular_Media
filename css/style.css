@@ -292,6 +292,11 @@ form {
     margin: 0.625rem;
 }
 
+#minha-div-oculta {
+    display: none;
+}
+
+
 /* INPUTS */
 
 input:invalid, textarea:invalid{
