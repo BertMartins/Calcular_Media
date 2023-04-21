@@ -18,6 +18,7 @@ let cxMediaFinal = document.querySelector('#mediafinal')
 let cxSituacao = document.querySelector('#situacao')
 let cxSituacaoRecuperacao = document.querySelector('#situacaoRecuperacao')
 let divOculta = document.getElementById("minha-div-oculta");
+let divOculta2 = document.getElementById("minha-div-oculta2");
 
 
 
@@ -113,6 +114,33 @@ btnCalcular.addEventListener('click', function(e) {
     let nota1 = parseFloat(cxNota1.value)
     let nota2 = parseFloat(cxNota2.value)
     let media = calcularMedia(nota1, nota2)
+  
+  
+    function precisaNota2() {
+  
+      if (!nota2) {
+
+        if (nota1 < 4) {
+          let avTemp = 0;
+          while (((avTemp + nota1) / 2) < 4) {
+            avTemp = avTemp + 0.01;
+          }
+          document.getElementById("precisa").innerHTML = "Você precisa de " +  (avTemp - 0.01).toFixed(2) + " para não reprovar direto" 
+          divOculta2.style.display = "block";
+        }
+  
+        if (nota1 >= 4) {
+          let av2 = 10.00;
+          while (((nota1 + av2) / 2) >= 7) {
+            av2 = av2 - 0.01;
+          }
+          document.getElementById("precisa").innerHTML = "Você precisa de " + (av2 + 0.01).toFixed(2) + " na AV2" 
+          divOculta2.style.display = "block";
+        }
+  
+      }
+    }
+    precisaNota2();
     
     
     console.log(nota1)
@@ -207,6 +235,8 @@ btnLimpar.addEventListener('click', function() {
     cxSituacaoRecuperacao.value = "";
     document.getElementById("necessidade").innerHTML = "" 
     divOculta.style.display = "none";
+    document.getElementById("precisa").innerHTML = "" 
+    divOculta2.style.display = "none";
     cxNota3.value = "";
     cxMediaFinal.value = "";
     
