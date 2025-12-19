@@ -68,43 +68,6 @@ function closeMobileMenu() {
 }
 
 // =====================
-// CAROUSEL
-// =====================
-let currentSlide = 0;
-const slides = document.querySelectorAll('.carousel-slide');
-const dots = document.querySelectorAll('.carousel-dot');
-
-function goToSlide(index) {
-    slides[currentSlide].classList.remove('active');
-    dots[currentSlide].classList.remove('active', 'bg-white');
-    dots[currentSlide].classList.add('bg-white/50');
-
-    currentSlide = index;
-
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active', 'bg-white');
-    dots[currentSlide].classList.remove('bg-white/50');
-
-    // Re-trigger animations
-    slides[currentSlide].querySelectorAll('.animate-fadeInUp').forEach(el => {
-        el.style.animation = 'none';
-        el.offsetHeight;
-        el.style.animation = null;
-    });
-}
-
-function nextSlide() {
-    goToSlide((currentSlide + 1) % slides.length);
-}
-
-function prevSlide() {
-    goToSlide((currentSlide - 1 + slides.length) % slides.length);
-}
-
-// Auto-advance carousel
-setInterval(nextSlide, 6000);
-
-// =====================
 // APP DATA
 // =====================
 let appData = { semesters: [] };
@@ -789,6 +752,50 @@ document.addEventListener('DOMContentLoaded', () => {
             situacaoText.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Reprovado';
         }
     });
+
+    // =====================
+    // HELP MODAL
+    // =====================
+    const helpBtn = document.getElementById('helpBtn');
+    const closeHelpBtn = document.getElementById('closeHelpModal');
+    const helpModal = document.getElementById('helpModal');
+
+    function openHelpModal() {
+        helpModal.classList.remove('hidden');
+        helpModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHelpModal() {
+        helpModal.classList.add('hidden');
+        helpModal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    if (helpBtn) {
+        helpBtn.addEventListener('click', openHelpModal);
+    }
+
+    if (closeHelpBtn) {
+        closeHelpBtn.addEventListener('click', closeHelpModal);
+    }
+
+    // Clique fora do card fecha
+    if (helpModal) {
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                closeHelpModal();
+            }
+        });
+    }
+
+    // ESC fecha
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !helpModal.classList.contains('hidden')) {
+            closeHelpModal();
+        }
+    });
+
 
     // Recovery clear button
     document.getElementById('quickRecoveryClearBtn').addEventListener('click', function () {
