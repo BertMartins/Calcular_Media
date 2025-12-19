@@ -109,21 +109,30 @@ setInterval(nextSlide, 6000);
 // =====================
 let appData = { semesters: [] };
 let confirmCallback = null;
+const STORAGE_KEY = 'uninassau_calculadora_v2';
 
 function saveData() {
     try {
-        window.appDataBackup = JSON.stringify(appData);
+        const storage = window['localStorage'];
+        if (storage) {
+            storage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
     } catch (e) {
-        console.log('Save error');
+        console.error('Erro ao salvar no localStorage', e);
     }
 }
 
 function loadData() {
     try {
-        if (window.appDataBackup) {
-            appData = JSON.parse(window.appDataBackup);
+        const storage = window['localStorage'];
+        if (storage) {
+            const dataStr = storage.getItem(STORAGE_KEY);
+            if (dataStr) {
+                appData = JSON.parse(dataStr);
+            }
         }
     } catch (e) {
+        console.error('Erro ao carregar do localStorage', e);
         appData = { semesters: [] };
     }
 }
@@ -545,6 +554,109 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set initial nav state
     navigateTo('home');
+
+    // =====================
+    // EXPORT / IMPORT DATA
+    // =====================
+
+    // Export data as JSON file
+    document.getElementById('exportDataBtn').addEventListener('click', function () {
+        if (appData.semesters.length === 0) {
+            showToast('Nenhum dado para exportar!', 'warning');
+            return;
+        }
+
+        const dataStr = JSON.stringify(appData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const date = new Date();
+        const dateStr = date.toISOString().split('T')[0];
+        const filename = 'uninassau_notas_' + dateStr + '.json';
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Dados exportados com sucesso!', 'success');
+    });
+
+    // Import button click
+    document.getElementById('importDataBtn').addEventListener('click', function () {
+        document.getElementById('importFileInput').click();
+    });
+
+    // Import file selected
+    document.getElementById('importFileInput').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            try {
+                const importedData = JSON.parse(event.target.result);
+
+                // Validate structure
+                if (!importedData.semesters || !Array.isArray(importedData.semesters)) {
+                    showToast('Arquivo inválido!', 'error');
+                    return;
+                }
+
+                // Confirm import
+                showConfirm('Isso substituirá todos os dados atuais. Deseja continuar?', () => {
+                    appData = importedData;
+                    saveData();
+                    renderSemesters();
+                    updateStats();
+                    showToast('Dados importados com sucesso!', 'success');
+                });
+            } catch (error) {
+                showToast('Erro ao ler o arquivo!', 'error');
+            }
+        };
+        reader.readAsText(file);
+
+        // Reset input
+        e.target.value = '';
+    });
+
+    // Close data notice
+    document.getElementById('closeDataNotice').addEventListener('click', function () {
+        document.getElementById('dataNotice').style.display = 'none';
+    });
+
+    // Toast notification function
+    function showToast(message, type) {
+        const colors = {
+            success: 'bg-emerald-500',
+            error: 'bg-red-500',
+            warning: 'bg-amber-500',
+            info: 'bg-blue-500'
+        };
+
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-4 right-4 z-50 ' + colors[type] + ' text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-slideDown';
+        toast.innerHTML = '<i class="fas ' + icons[type] + '"></i><span>' + message + '</span>';
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
 
     // =====================
     // QUICK CALCULATOR
